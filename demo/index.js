@@ -2,9 +2,11 @@ import React from 'react';
 import _ from 'underscore';
 import ReactDOM from 'react-dom';
 import {Router, Route, IndexRoute, hashHistory, Link} from 'react-router';
+import {SplitButton, MenuItem} from 'react-bootstrap';
 import {
     Util,
     Grid,
+    Sheet,
     Droper,
     Validate,
     ValidateMixin,
@@ -28,6 +30,8 @@ import moment from 'moment';
 import pinYin from 'pinyin';
 
 import './index.less';
+
+const {SheetColumn} = Sheet;
 
 const LayoutWrap = React.createClass({
     render(){
@@ -76,6 +80,8 @@ const OverlayWrap = React.createClass({
                 <hr/>
                 <h1>NProgress</h1>
                 <NProgressWrap></NProgressWrap>
+                <h1>Sheet</h1>
+                <SheetWrap></SheetWrap>
             </div>
         );
     }
@@ -202,9 +208,9 @@ var onClick = function () {
     console.log(arguments);
 };
 
-var isShow = function () {
-    //console.log(arguments);
-    return false;
+var isShow = function (value, index) {
+    console.log(value, index);
+    return value.id === 1;
 };
 
 var renderId = function () {
@@ -219,7 +225,7 @@ var GridWrap = React.createClass({
             enableSelect: true,
             enablePagination: true,
             enablePaginationText: true,
-            loading: true,
+            loading: false,
             columns: [
                 {field: 'id', name: 'id', render: renderId},
                 {field: 'name', name: '名字', style: {width: 100}},
@@ -233,6 +239,18 @@ var GridWrap = React.createClass({
             }, {
                 text: '删除2',
                 click: onClick
+            }, {
+                render: function () {
+                    return (
+                        <SplitButton bsSize="xsmall" title={'asdf'}>
+                            <MenuItem eventKey="1">Action</MenuItem>
+                            <MenuItem eventKey="2">Another action</MenuItem>
+                            <MenuItem eventKey="3">Something else here</MenuItem>
+                            <MenuItem divider/>
+                            <MenuItem eventKey="4">Separated link</MenuItem>
+                        </SplitButton>
+                    );
+                }
             }],
             // 依赖 enableSelect:true
             batchs: [{
@@ -248,7 +266,7 @@ var GridWrap = React.createClass({
                 name: '偶们啊啊发骚发所发生的',
                 age: '10'
             }, {
-                id: 1,
+                id: 2,
                 name: 'haha',
                 age: '15'
             }],
@@ -289,6 +307,17 @@ var GridWrap = React.createClass({
         setTimeout(function () {
             t.setState(t.state);
         }, 3000);
+    }
+});
+
+var SheetWrap = React.createClass({
+    render(){
+        return (
+            <Sheet>
+                <SheetColumn field="id" name="id" children="adf">
+                </SheetColumn>
+            </Sheet>
+        );
     }
 });
 
