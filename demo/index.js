@@ -7,6 +7,8 @@ import {
     Util,
     Grid,
     Sheet,
+    Pagination,
+    PaginationText,
     Droper,
     Validate,
     ValidateMixin,
@@ -31,7 +33,7 @@ import pinYin from 'pinyin';
 
 import './index.less';
 
-const {SheetColumn} = Sheet;
+const {SheetColumn, SheetAction, SheetBatchAction} = Sheet;
 
 const LayoutWrap = React.createClass({
     render(){
@@ -48,6 +50,8 @@ const DataWrap = React.createClass({
     render(){
         return (
             <div>
+                <h1>Sheet</h1>
+                <SheetWrap></SheetWrap>
                 <h1>Grid</h1>
                 <GridWrap></GridWrap>
                 <h1>ImportLead</h1>
@@ -80,8 +84,6 @@ const OverlayWrap = React.createClass({
                 <hr/>
                 <h1>NProgress</h1>
                 <NProgressWrap></NProgressWrap>
-                <h1>Sheet</h1>
-                <SheetWrap></SheetWrap>
             </div>
         );
     }
@@ -311,13 +313,42 @@ var GridWrap = React.createClass({
 });
 
 var SheetWrap = React.createClass({
+    getInitialState(){
+        return {
+            list: [{
+                id: 1,
+                name: '偶们啊啊发骚发所发生的',
+                age: '10'
+            }, {
+                id: 2,
+                name: 'haha',
+                age: '15',
+                _gm_select: true
+            }],
+            pagination: {
+                count: 80,
+                offset: 10,
+                limit: 10
+            }
+        };
+    },
     render(){
         return (
-            <Sheet>
-                <SheetColumn field="id" name="id" children="adf">
+            <Sheet enableSelect list={this.state.list}>
+                <SheetColumn field="id" name="id" children="idlo">
+                    {value => value}
                 </SheetColumn>
+                <SheetColumn field="name" name="name" children="名字">
+                </SheetColumn>
+                <Pagination data={this.state.pagination} toPage={this.handlePage}></Pagination>
+                <PaginationText data={this.state.pagination}></PaginationText>
+                <SheetAction></SheetAction>
+                <SheetBatchAction></SheetBatchAction>
             </Sheet>
         );
+    },
+    handlePage(){
+        console.log(arguments);
     }
 });
 
