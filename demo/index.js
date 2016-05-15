@@ -33,7 +33,7 @@ import pinYin from 'pinyin';
 
 import './index.less';
 
-const {SheetColumn, SheetAction, SheetBatchAction} = Sheet;
+const {SheetColumn, SheetAction, SheetSelect, SheetBatchAction} = Sheet;
 
 const LayoutWrap = React.createClass({
     render(){
@@ -244,7 +244,7 @@ var GridWrap = React.createClass({
             }, {
                 render: function () {
                     return (
-                        <SplitButton bsSize="xsmall" title={'asdf'}>
+                        <SplitButton bsSize="xsmall" title={'asdf'} id="adf">
                             <MenuItem eventKey="1">Action</MenuItem>
                             <MenuItem eventKey="2">Another action</MenuItem>
                             <MenuItem eventKey="3">Something else here</MenuItem>
@@ -316,11 +316,11 @@ var SheetWrap = React.createClass({
     getInitialState(){
         return {
             list: [{
-                id: 1,
+                id: 3,
                 name: '偶们啊啊发骚发所发生的',
                 age: '10'
             }, {
-                id: 2,
+                id: 4,
                 name: 'haha',
                 age: '15',
                 _gm_select: true
@@ -329,26 +329,71 @@ var SheetWrap = React.createClass({
                 count: 80,
                 offset: 10,
                 limit: 10
-            }
+            },
+            loading: true
         };
     },
     render(){
         return (
-            <Sheet enableSelect list={this.state.list}>
-                <SheetColumn field="id" name="id" children="idlo">
-                    {value => value}
+            <Sheet list={this.state.list} loading={this.state.loading}>
+                <SheetColumn field="id" name="id">
+                    {(value, i) => (value + i)}
                 </SheetColumn>
-                <SheetColumn field="name" name="name" children="名字">
-                </SheetColumn>
+                <SheetColumn field="name" name="name" style={{width: '150px'}}></SheetColumn>
                 <Pagination data={this.state.pagination} toPage={this.handlePage}></Pagination>
                 <PaginationText data={this.state.pagination}></PaginationText>
-                <SheetAction></SheetAction>
-                <SheetBatchAction></SheetBatchAction>
+                <SheetAction>
+                    {(value, i) => (
+                        <div>
+                            <button className="btn btn-xs btn-default gm-marginRight5"
+                                    onClick={this.handleAction.bind(this, value, i)}>删除
+                            </button>
+                            < SplitButton bsSize="xsmall" title={'下拉框'} id="asdfas">
+                                <MenuItem eventKey="1">Action</MenuItem>
+                                <MenuItem eventKey="2">Another action</MenuItem>
+                            </SplitButton>
+                        </div>
+                    )}
+                </SheetAction>
+                <SheetSelect onSelect={this.handleSelect} onSelectAll={this.handleSelectAll}></SheetSelect>
+                <SheetBatchAction>
+                    <button className="btn btn-primary btn-sm gm-marginRight5" onClick={this.handleBatchAction}>批量操作
+                    </button>
+                    <button className="btn btn-default btn-sm" onClick={this.handleBatchAction}>批量操作2</button>
+                </SheetBatchAction>
             </Sheet>
         );
     },
+    componentDidMount(){
+        setTimeout(() => {
+            this.setState({
+                loading: false
+            });
+        }, 1000);
+    },
     handlePage(){
         console.log(arguments);
+    },
+    handleAction(value, i){
+        console.log(value, i);
+    },
+    handleBatchAction(){
+        console.log(_.filter(this.state.list, value => value._gm_select));
+    },
+    handleSelect(checked, i){
+        const list = this.state.list;
+        list[i]._gm_select = checked;
+        this.setState({
+            list
+        });
+    },
+    handleSelectAll(checked){
+        this.setState({
+            list: _.map(this.state.list, value => {
+                value._gm_select = checked;
+                return value;
+            })
+        });
     }
 });
 
