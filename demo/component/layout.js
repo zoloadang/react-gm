@@ -1,21 +1,36 @@
 import React from 'react';
 import {
-    Flex
+    Flex,
+    Item
 } from '../../src/index';
 
 var FlexWrap = React.createClass({
     render(){
         return (
-            <Flex column height="200px">
-                <Flex>top</Flex>
-                <Flex flex>
-                    <Flex>
-                        <Flex style={{background: 'red'}}>
-                            <div style={{background: 'yellow'}}>left1</div>
-                        </Flex>
-                    </Flex>
-                    <Flex flex>content</Flex>
+            <Flex  height="200px" justifyAround>
+                <Flex height="100px">
+                    <Item selfEnd>aaa</Item>
+                    <Item>ccc</Item>
                 </Flex>
+
+                <Item
+                    selfCenter
+                    style={{
+                    'backgroundColor': '#F0F'
+                    }}
+                >
+                    <div>43434</div>
+                </Item>
+
+                <Item
+                    selfStart
+                    style={{
+                        'backgroundColor': '#FF0'
+                    }}
+                >
+                    <div>demo</div>
+                </Item>
+
             </Flex>
         );
     }

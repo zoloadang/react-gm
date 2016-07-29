@@ -17,6 +17,7 @@ import Hr from './component/hr';
 import Dialog from './component/dialog';
 import Navigation from './component/navigation';
 import Flex from './component/flex';
+import Item from './component/item';
 import TimeSpan from './component/timespan';
 import TimeSpanPicker from './component/timespanpicker';
 import DropSelect from './component/drop.select';
@@ -49,6 +50,7 @@ module.exports = {
     Dialog,
     Navigation,
     Flex,
+    Item,
     TimeSpan,
     TimeSpanPicker,
     DropSelect,

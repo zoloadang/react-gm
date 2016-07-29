@@ -1,63 +1,70 @@
 import React, {PropTypes} from 'react';
 import classNames from 'classnames';
 
+
 class Flex extends React.Component {
 
     render() {
         const {
-            flex,
+            block = true,
 
-            auto, none, width, height,
+            column, row, columnReverse, rowReverse,
 
-            row, column,
-
-            wrap, nowrap,
+            wrap, nowrap, wrapReverse,
 
             justifyStart, justifyEnd, justifyCenter, justifyBetween, justifyAround,
 
-            alignStart, alignEnd, alignCenter, alignBaseline, alignStretch,
+            alignStart, alignEnd, alignCenter, alignBetween, alignAround, alignStretch,
+
+            itemsStart, itemsEnd, itemsCenter, itemsBaseline, itemsStretch,
+
+            height, width,
 
             className, style,
-
             ...rest
         } = this.props;
+
+        const inline = block ? false : true;
+
         const cn = classNames({
-            'gm-flex': true,
+            'gm-flex-inline': inline,
+            'gm-flex-block': block,
 
-            'gm-flex-flex': flex,
-            'gm-flex-auto': auto,
-            'gm-flex-none': none || width || height,
+            'flex-direction-row': row,
+            'flex-direction-column': column,
+            'flex-direction-row-reverse': rowReverse,
+            'flex-direction-column-reverse': columnReverse,
 
-            'gm-flex-row': row,
-            'gm-flex-column': column,
+            'flex-wrap': wrap,
+            'flex-wrap-reverse': wrapReverse,
+            'flex-nowrap': nowrap,
 
-            'gm-flex-wrap': wrap,
-            'gm-flex-nowrap': nowrap,
+            'flex-justify-start': justifyStart,
+            'flex-justify-end': justifyEnd,
+            'flex-justify-center': justifyCenter,
+            'flex-justify-between': justifyBetween,
+            'flex-justify-around': justifyAround,
 
-            'gm-flex-justify-start': justifyStart,
-            'gm-flex-justify-end': justifyEnd,
-            'gm-flex-justify-center': justifyCenter,
-            'gm-flex-justify-between': justifyBetween,
-            'gm-flex-justify-around': justifyAround,
+            'flex-align-start': alignStart,
+            'flex-align-end': alignEnd,
+            'flex-align-center': alignCenter,
+            'flex-align-between': alignBetween,
+            'flex-align-around': alignAround,
+            'flex-align-stretch': alignStretch,
 
-            'gm-flex-align-start': alignStart,
-            'gm-flex-align-end': alignEnd,
-            'gm-flex-align-center': alignCenter,
-            'gm-flex-align-baseline': alignBaseline,
-            'gm-flex-align-stretch': alignStretch
+            'flex-items-start': itemsStart,
+            'flex-items-end': itemsEnd,
+            'flex-items-center': itemsCenter,
+            'flex-items-basline': itemsBaseline,
+            'flex-items-stretch': itemsStretch
         }, className);
 
-        // TODO 有待商榷，WebkitFlex 是否会生效？
         let s = Object.assign({}, style);
-        if (flex) {
-            s.flex = (typeof flex === 'boolean') ? 1 : flex;
-            s.WebKitFlex = (typeof flex === 'boolean') ? 1 : flex;
-        }
         if (height) {
-            s.height = height;
+            s.height = typeof height === 'number' ? height + 'px' : height;
         }
         if (width) {
-            s.width = width;
+            s.width = typeof width === 'number' ? width + 'px' : width;
         }
 
         return <div {...rest} className={cn} style={s}>{this.props.children}</div>;
@@ -65,25 +72,39 @@ class Flex extends React.Component {
 }
 
 Flex.propTypes = {
-    flex: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
-    auto: PropTypes.bool,
-    none: PropTypes.bool,
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    row: PropTypes.bool,
+
+    inline: PropTypes.bool,
+    block: PropTypes.bool,
+
     column: PropTypes.bool,
+    row: PropTypes.bool,
+    columnReverse: PropTypes.bool,
+    rowReverse: PropTypes.bool,
+
     wrap: PropTypes.bool,
     nowrap: PropTypes.bool,
+    wrapReverse: PropTypes.bool,
+
     justifyStart: PropTypes.bool,
     justifyEnd: PropTypes.bool,
     justifyCenter: PropTypes.bool,
     justifyBetween: PropTypes.bool,
     justifyAround: PropTypes.bool,
+
     alignStart: PropTypes.bool,
     alignEnd: PropTypes.bool,
     alignCenter: PropTypes.bool,
-    alignBaseline: PropTypes.bool,
-    alignStretch: PropTypes.bool
+    alignBetween: PropTypes.bool,
+    alignAround: PropTypes.bool,
+    alignStretch: PropTypes.bool,
+
+    itemsStart: PropTypes.bool,
+    itemsEnd: PropTypes.bool,
+    itemsCenter: PropTypes.bool,
+    itemsBaseline: PropTypes.bool,
+    itemsStretch: PropTypes.bool
 };
 
 export default Flex;
