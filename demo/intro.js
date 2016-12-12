@@ -1,4 +1,4 @@
-import Introjs from 'intro.js';
+import Introjs from 'intro.js/intro';
 import 'intro.js/introjs.css';
 
 const introJs = Introjs.introJs();
@@ -10,13 +10,28 @@ introJs.setOptions({
     nextLabel: '下一步',
     prevLabel: '上一步',
     skipLabel: '跳过',
-    doneLabel: '完成'
+    doneLabel: '完成',
+    showBullets: false
 });
 
-introJs.onafterchange((targetElement) => {
+introJs.onbeforechange((targetElement) => {
     const url = targetElement.dataset['url'];
     if(url) {
         window.location = url;
+    }
+    if(targetElement.tagName === 'A') {
+        setTimeout(() => {
+            const tempClass = targetElement.className === 'active' ? 'active ' : '';
+            targetElement.setAttribute('class', tempClass + 'introjs-showElement introjs-relativePosition');
+        }, 100);
+    }
+});
+introJs.onNextButtonClick((ele) => {
+    if(ele) {
+        const click = ele.dataset['click'];
+        if(click) {
+            ele.click();
+        }
     }
 });
 
