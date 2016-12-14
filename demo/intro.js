@@ -1,5 +1,4 @@
-import Introjs from 'intro.js/intro';
-import 'intro.js/introjs.css';
+import Introjs from 'react-intro.js/intro';
 
 const introJs = Introjs.introJs();
 
@@ -14,35 +13,58 @@ introJs.setOptions({
     showBullets: false
 });
 
+const steps = [
+    {
+        intro: '开始功能引导'
+    },
+    {
+        intro: '这里看UI规范',
+        element: '#intro1'
+    },
+    {
+        intro: '这里看组件',
+        element: '#intro2'
+    },
+    {
+        intro: '点导航进入Collapse看具体用法',
+        element: '#intro3'
+    },
+    {
+        intro: '点按钮展开Collapse',
+        element: '#intro4'
+    },
+    {
+        intro: '展开后的Collapse',
+        element: '#intro5'
+    }
+];
+
+introJs.setOption('steps', steps);
+
 introJs.onbeforechange((targetElement) => {
-    const url = targetElement.dataset['url'];
-    if(url) {
-        window.location = url;
-    }
-    if(targetElement.tagName === 'A') {
-        setTimeout(() => {
-            const tempClass = targetElement.className === 'active' ? 'active ' : '';
-            targetElement.setAttribute('class', tempClass + 'introjs-showElement introjs-relativePosition');
-        }, 100);
-    }
-});
-introJs.onNextButtonClick((ele) => {
-    if(ele) {
-        const click = ele.dataset['click'];
-        if(click) {
-            ele.click();
+    const step = introJs._currentStep;
+    if (step) {
+        if (step === 3) {
+            targetElement.click();
+        } else if (step === 4) {
+            targetElement.click();
         }
     }
 });
 
-introJs.oncomplete(() => {
-    if(introJs._currentStep === 2) {
-        setTimeout(() => {
-            introJs.goToStep(3).start();
-        }, 0);
+introJs.onchange(() => {
+    // 在_showElement的时候修正element
+    const step = introJs._currentStep;
+    const stepItem = introJs._introItems[introJs._currentStep];
+    if (steps[step].element) {
+        stepItem.element = document.querySelector(steps[step].element);
+
+        // 非某刻页面元素
+        if (stepItem.position === 'floating') {
+            stepItem.position = 'bottom';
+        }
     }
 });
-
 
 module.exports = {
     start: () => {
