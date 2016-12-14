@@ -88,10 +88,10 @@ const standardMap = {
 };
 
 const setNavCurrent = () => {
-    _.each(document.querySelectorAll('.demo-left a'), element => element.className = '');
+    _.each(document.querySelectorAll('.demo-left a'), element => element.className = element.className.replace(/active/g, ''));
     const dom = document.querySelector('.demo-left a[href="' + location.hash + '"]');
     if (dom) {
-        dom.className = 'active';
+        dom.className = dom.className + ' active';
     }
 };
 
