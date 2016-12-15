@@ -9,6 +9,7 @@ import {Flex as GMFlex, LayoutRoot} from '../src/index';
 import {Router, Route, hashHistory, IndexRedirect} from 'react-router';
 import _ from 'underscore';
 import cx from 'classnames';
+import {IntroWrap} from './intro';
 
 import Demo from './component/demo';
 
@@ -96,29 +97,6 @@ const setNavCurrent = () => {
     }
 };
 
-class IntroWrap extends React.Component {
-    render() {
-        const {
-            id,
-            dataStep,
-            dataIntro,
-            children // eslint-disable-line
-        } = this.props;
-        return (
-            <div
-                id={id}
-                data-step={dataStep}
-                data-intro={dataIntro}
-                className="gm-inline-block"
-            >
-                {
-                    React.cloneElement(children, Object.assign({}, {...children.props}))
-                }
-            </div>
-        );
-    }
-}
-
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -196,7 +174,6 @@ class App extends React.Component {
         setTimeout(() => {
             setNavCurrent();
         }, 10);
-        console.log(this.state.a, 'a...');
         return (
             <div className="demo">
                 <div className="demo-header">
@@ -207,8 +184,8 @@ class App extends React.Component {
                         </a>
                         <GMFlex flex justifyEnd alignCenter className="gm-header-nav">
                             <a href="javascript:;" onClick={this.handleIntro}>功能引导？TODO</a>
-                            <IntroWrap id="intro1" dataStep="2">
-                                <a className={cx({
+                            <IntroWrap>
+                                <a id="intro1" className={cx({
                                     'sssss': this.state.a
                                 })} href="#/standard">UI规范TODO</a>
                             </IntroWrap>

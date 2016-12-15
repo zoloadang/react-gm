@@ -1,7 +1,10 @@
 import Introjs from 'react-intro.js/intro';
 import 'react-intro.js/introjs.css';
-
+import React from 'react';
 const introJs = Introjs.introJs();
+
+// intro step 初始类
+let introStepClassName = '';
 
 window.introJs = introJs;
 
@@ -57,6 +60,7 @@ introJs.onbeforechange((targetElement) => {
             });
         }
     }
+
 });
 
 introJs.onchange(() => {
@@ -72,9 +76,35 @@ introJs.onchange(() => {
         }
     }
 });
+introJs.onafterchange((targetElement) => {
+    if(introJs._currentStep === 1) {
+        introStepClassName =  targetElement.className;
+    } else {
+        introStepClassName = '';
+    }
+});
+
+class IntroWrap extends React.Component {
+    render() {
+        const {
+            className,
+            ...rest
+        } = this.props.children.props;
+        introStepClassName = ((className || '') + introStepClassName).replace(/\s+/, ' ');
+
+        return React.cloneElement(this.props.children,
+                Object.assign({},
+                    {
+                        className: introStepClassName,
+                        ...rest
+                    }
+            ));
+    }
+}
 
 module.exports = {
     start: () => {
         introJs.start();
-    }
+    },
+    IntroWrap
 };
