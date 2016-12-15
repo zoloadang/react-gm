@@ -3,8 +3,7 @@ import 'react-intro.js/introjs.css';
 import React from 'react';
 const introJs = Introjs.introJs();
 
-// intro step 初始类
-let introStepClassName = '';
+let setIntroClassNameFunc = null;
 
 window.introJs = introJs;
 
@@ -76,31 +75,59 @@ introJs.onchange(() => {
         }
     }
 });
-introJs.onafterchange((targetElement) => {
-    if(introJs._currentStep === 1) {
-        introStepClassName =  targetElement.className;
-    } else {
-        introStepClassName = '';
-    }
+
+
+introJs.onafterchange(() => {
+    IntroWrap.setIntroClassName(" introjs-showElement introjs-relativePosition");
+});
+introJs.onexit(() => {
+    IntroWrap.setIntroClassName('');
 });
 
 class IntroWrap extends React.Component {
-    render() {
-        const {
-            className,
-            ...rest
-        } = this.props.children.props;
-        introStepClassName = ((className || '') + introStepClassName).replace(/\s+/, ' ');
+    constructor(props) {
+        super(props);
+        this.state = {
+            introClassName: ''
+        };
+    }
+    componentDidMount() {
+        setIntroClassNameFunc = (introClassName) => {
+            this.setState({
+                introClassName
+            });
+        };
+    }
 
-        return React.cloneElement(this.props.children,
-                Object.assign({},
-                    {
-                        className: introStepClassName,
-                        ...rest
-                    }
-            ));
+    componentWillUnmount() {
+        setIntroClassNameFunc = null;
+    }
+    render() {
+        const children = this.props.children;
+
+        const childrenId = children.props.id,
+            currentStep = introJs._introItems[introJs._currentStep] || {},
+            currentStepId = currentStep.element && currentStep.element.id;
+
+        let introClass = children.props.className;
+
+        if(childrenId === currentStepId) {
+            console.log('true...');
+            introClass += this.state.introClassName;
+        }
+
+        return React.cloneElement(this.props.children, Object.assign({},
+            {...children.props},
+            {className: introClass}));
     }
 }
+IntroWrap.setIntroClassName = (introClassName) => {
+    if (setIntroClassNameFunc) {
+        setIntroClassNameFunc(introClassName);
+    } else {
+        console.warn('IntroWrap is uninitialized');
+    }
+};
 
 module.exports = {
     start: () => {
