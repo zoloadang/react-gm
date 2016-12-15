@@ -1,12 +1,14 @@
 import Introjs from 'react-intro.js/intro';
 import 'react-intro.js/introjs.css';
 import React from 'react';
-const introJs = Introjs.introJs();
+import classNames from 'classnames';
+import _ from 'underscore';
 
-let setIntroClassNameFunc = null;
+const introJs = Introjs.introJs();
 
 window.introJs = introJs;
 
+// 这部分是体验引导功能代码 begin
 introJs.setOptions({
     exitOnOverlayClick: false,
     nextLabel: '下一步',
@@ -75,59 +77,84 @@ introJs.onchange(() => {
         }
     }
 });
+// 这部分是体验引导功能代码 end
 
+
+// 会有多个监听者，所以是数组
+let listenerIntroChange = [];
 
 introJs.onafterchange(() => {
-    IntroWrap.setIntroClassName(" introjs-showElement introjs-relativePosition");
+    // 变的时候通知。 一开始的时候也会onafterchange
+    _.each(listenerIntroChange, linstener => linstener());
 });
 introJs.onexit(() => {
-    IntroWrap.setIntroClassName('');
+    // 结束的时候通知
+    _.each(listenerIntroChange, linstener => linstener());
 });
 
 class IntroWrap extends React.Component {
     constructor(props) {
         super(props);
+        // 任意，用来更新而已
         this.state = {
-            introClassName: ''
+            i: 0
         };
+        this.linstener = null;
     }
+
     componentDidMount() {
-        setIntroClassNameFunc = (introClassName) => {
+        // 监听
+        this.linstener = () => {
             this.setState({
-                introClassName
+                i: this.state.i + 1
             });
         };
+        listenerIntroChange.push(this.linstener);
     }
 
     componentWillUnmount() {
-        setIntroClassNameFunc = null;
+        // 卸载
+        const i = listenerIntroChange.indexOf(this.linstener);
+        if (i > -1) {
+            listenerIntroChange.splice(i, 1);
+        }
     }
+
     render() {
-        const children = this.props.children;
+        // 默认children有
+        const {children} = this.props;
 
-        const childrenId = children.props.id,
-            currentStep = introJs._introItems[introJs._currentStep] || {},
-            currentStepId = currentStep.element && currentStep.element.id;
+        const {id, className} = children.props;
 
-        let introClass = children.props.className;
-
-        if(childrenId === currentStepId) {
-            console.log('true...');
-            introClass += this.state.introClassName;
+        // 如果忘了写id, 则啥也不做，因为没法匹配当前步骤
+        if (!id) {
+            console.warn('can not find id');
+            return children;
         }
 
-        return React.cloneElement(this.props.children, Object.assign({},
-            {...children.props},
-            {className: introClass}));
+        // 如果没有开始引导，观察没有_currentStep字段
+        // 如果结束之后，_currentStep是undefined
+        if (introJs._currentStep === undefined) {
+            return children;
+        }
+
+        const element = introJs._introItems[introJs._currentStep].element;
+        // 有些步骤没有element
+        if (!element) {
+            return children;
+        }
+
+        // 如果非当前步骤，啥也不做
+        if (id !== element.id) {
+            return children;
+        }
+
+        return React.cloneElement(children, {
+            ...children.props,
+            className: classNames(className, 'introjs-showElement introjs-relativePosition')
+        });
     }
 }
-IntroWrap.setIntroClassName = (introClassName) => {
-    if (setIntroClassNameFunc) {
-        setIntroClassNameFunc(introClassName);
-    } else {
-        console.warn('IntroWrap is uninitialized');
-    }
-};
 
 module.exports = {
     start: () => {
