@@ -44,13 +44,13 @@ const steps = [
     }
 ];
 
-introJs.setOption('steps', steps);
-
 introJs.onbeforechange((targetElement) => {
     const step = introJs._currentStep;
     if (step) {
-        if (step === 3) {
+        if (step === 2) {
             targetElement.click();
+        } else if(step === 3) {
+            console.log(document.querySelector('#intro3').click());
         } else if (step === 5) {
             // 异步场景，返回一个promise
             document.querySelector('#intro4').click();
@@ -90,6 +90,11 @@ introJs.onafterchange(() => {
 introJs.onexit(() => {
     // 结束的时候通知
     _.each(listenerIntroChange, linstener => linstener());
+});
+introJs.oncomplete(() => {
+    if(introJs._options.steps) {
+        location.href = '#/standard/Color?intro';
+    }
 });
 
 class IntroWrap extends React.Component {
@@ -158,7 +163,14 @@ class IntroWrap extends React.Component {
 
 module.exports = {
     start: () => {
+        introJs.setOption('steps', steps);
+        introJs.setOption('doneLabel', '进入UI规范');
         introJs.start();
+    },
+    goToStart: (step) => {
+        introJs.setOption('steps', null);
+        introJs.setOption('doneLabel', '完成指引');
+        introJs.goToStep(step).start();
     },
     IntroWrap
 };
